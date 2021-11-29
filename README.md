@@ -1,19 +1,21 @@
-# Jasmine Test Explorer for Visual Studio Code
+# Lab Test Explorer for Visual Studio Code
 
-Run your Jasmine tests in Node using the 
+> Forked from [`Jasmine Test Explorer`](https://github.com/hbenl/vscode-jasmine-test-adapter).
+
+<!-- Run your Jasmine tests in Node using the 
 [Test Explorer UI](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer).
 
-![Screenshot](img/screenshot.png)
+![Screenshot](img/screenshot.png) -->
 
 ## Features
 * Shows a Test Explorer in the Test view in VS Code's sidebar with all detected tests and suites and their state
 * Adds CodeLenses to your test files for starting and debugging tests
 * Adds Gutter decorations to your test files showing the tests' state
-* Adds line decorations to the source line where a test failed
-* Shows a failed test's log when the test is selected in the explorer
-* Lets you choose test suites or individual tests in the explorer that should be run automatically after each file change
+* ~~Adds line decorations to the source line where a test failed~~
+* ~~Shows a failed test's log when the test is selected in the explorer~~
+* ~~Lets you choose test suites or individual tests in the explorer that should be run automatically after each file change~~
 * Forwards the console output from Jasmine to a VS Code output channel
-
+<!-- 
 ## Getting started
 * Install the extension
 * Restart VS Code and open the Test view
@@ -90,4 +92,4 @@ If the "Jasmine Tests" output channel doesn't show up, the Test view doesn't sho
 There is a [bug in Node >= 10.6](https://github.com/nodejs/node/issues/21671) that breaks this adapter.
 If you're using a version of Node affected by this bug, add `"jasmineExplorer.nodePath": null` to your configuration as a workaround.
 
-If you think you've found a bug, please [file a bug report](https://github.com/hbenl/vscode-jasmine-test-adapter/issues) and attach the diagnostic logs.
+If you think you've found a bug, please [file a bug report](https://github.com/hbenl/vscode-jasmine-test-adapter/issues) and attach the diagnostic logs. -->

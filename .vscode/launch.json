@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Jasmine adapter",
+      "name": "Lab adapter",
       "type": "pwa-extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",

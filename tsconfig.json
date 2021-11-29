@@ -12,11 +12,13 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "removeComments": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/main.ts",
     "src/worker/loadTests.ts",
-    "src/worker/runTests.ts"
+    "src/worker/runTests.ts",
+    "src/worker/runTestsReporter.ts"
   ]
 }

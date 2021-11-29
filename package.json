@@ -1,32 +1,36 @@
 {
-  "name": "vscode-jasmine-test-adapter",
-  "displayName": "Jasmine Test Explorer",
-  "description": "Run your Jasmine tests in the Sidebar of Visual Studio Code",
+  "name": "vscode-lab-test-adapter",
+  "displayName": "Lab Test Explorer",
+  "description": "Run your Lab tests in the Sidebar of Visual Studio Code",
   "icon": "img/icon.png",
-  "author": "Holger Benl <hbenl@evandor.de>",
-  "publisher": "hbenl",
-  "version": "1.7.1",
+  "authors": [
+    "Holger Benl <hbenl@evandor.de>",
+    "Juan Cruz Leiva <juancojcl@hotmail.com>"
+  ],
+  "publisher": "ijuani",
+  "version": "1.0.0",
   "license": "MIT",
-  "homepage": "https://github.com/hbenl/vscode-jasmine-test-adapter",
+  "homepage": "https://github.com/IJuanI/vscode-lab-test-adapter",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hbenl/vscode-jasmine-test-adapter.git"
+    "url": "https://github.com/IJuanI/vscode-lab-test-adapter.git"
   },
   "bugs": {
-    "url": "https://github.com/hbenl/vscode-jasmine-test-adapter/issues"
+    "url": "https://github.com/IJuanI/vscode-lab-test-adapter/issues"
   },
   "categories": [
     "Other"
   ],
   "keywords": [
-    "jasmine",
+    "hapi",
+    "lab",
     "test",
     "testing"
   ],
   "main": "out/main.js",
   "scripts": {
     "reinstall": "rimraf node_modules package-lock.json && npm install",
-    "clean": "rimraf out vscode-jasmine-test-adapter-*.vsix",
+    "clean": "rimraf out vscode-lab-test-adapter-*.vsix",
     "build": "tsc",
     "watch": "tsc -w",
     "rebuild": "npm run clean && npm run build",
@@ -37,27 +41,26 @@
     "hbenl.vscode-test-explorer"
   ],
   "dependencies": {
-    "escape-string-regexp": "^4.0.0",
-    "fs-extra": "^9.0.1",
-    "jasmine": "^3.6.3",
-    "minimatch": "^3.0.4",
+    "@hapi/code": "8.0.5",
+    "@hapi/lab": "24.4.0",
+    "mock-require": "3.0.3",
+    "rewire": "5.0.0",
     "stack-trace": "0.0.10",
     "tslib": "^2.0.3",
+    "typescript": "^4.0.5",
     "vscode-test-adapter-api": "^1.9.0",
     "vscode-test-adapter-util": "^0.7.1"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.4",
-    "@types/jasmine": "^3.6.1",
-    "@types/minimatch": "^3.0.3",
+    "@types/mock-require": "2.0.0",
+    "@types/rewire": "2.5.28",
     "@types/stack-trace": "0.0.29",
-    "@types/vscode": "~1.47.0",
+    "@types/vscode": "^1.62.0",
     "rimraf": "^3.0.2",
-    "typescript": "^4.0.5",
-    "vsce": "^1.81.1"
+    "vsce": "2.5.0"
   },
   "engines": {
-    "vscode": "^1.47.0"
+    "vscode": "^1.62.0"
   },
   "activationEvents": [
     "*"
@@ -65,20 +68,20 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "Jasmine Test Explorer",
+      "title": "Lab Test Explorer",
       "properties": {
-        "jasmineExplorer.cwd": {
-          "description": "The working directory where Jasmine is run (relative to the workspace folder)",
+        "labExplorer.cwd": {
+          "description": "The working directory where Lab is run (relative to the workspace folder)",
           "type": "string",
           "scope": "resource"
         },
-        "jasmineExplorer.config": {
-          "description": "The location of the Jasmine config file (relative to the working directory)",
+        "labExplorer.config": {
+          "description": "The location of the labrc config file (relative to the working directory)",
           "type": "string",
-          "default": "spec/support/jasmine.json",
+          "default": ".labrc.js",
           "scope": "resource"
         },
-        "jasmineExplorer.env": {
+        "labExplorer.env": {
           "description": "Environment variables to be set when running the tests",
           "type": "object",
           "additionalProperties": {
@@ -87,13 +90,13 @@
           "default": {},
           "scope": "resource"
         },
-        "jasmineExplorer.debuggerPort": {
+        "labExplorer.debuggerPort": {
           "description": "The preferred port to use for debugging sessions",
           "type": "number",
           "default": 9229,
           "scope": "resource"
         },
-        "jasmineExplorer.nodePath": {
+        "labExplorer.nodePath": {
           "description": "The path to the node executable to use. By default it will attempt to find it on your PATH, if it can't find it or if this option is set to `null`, it will use the one shipped with VS Code",
           "type": [
             "string",
@@ -102,7 +105,7 @@
           "default": "default",
           "scope": "resource"
         },
-        "jasmineExplorer.nodeArgv": {
+        "labExplorer.nodeArgv": {
           "description": "The arguments to the node executable to use. To enable typescript support, install the ts-node npm package and set this property to [\"-r\", \"ts-node/register\"]",
           "type": "array",
           "items": {
@@ -110,8 +113,8 @@
           },
           "scope": "resource"
         },
-        "jasmineExplorer.jasminePath": {
-          "description": "The path to the jasmine package to use (relative to the workspace folder). By default (or if this option is set to `null`) it uses a bundled version of jasmine, to use the one installed in your project's node_modules folder, set this option to \"node_modules/jasmine\". This is necessary if you want to use the `requires` property in `jasmine.json` to load packages installed locally in your project's `node_modules` folder.",
+        "labExplorer.labPath": {
+          "description": "The path to the lab package to use (relative to the workspace folder). By default (or if this option is set to `null`) it uses a bundled version of @hapi/lab, to use the one installed in your project's node_modules folder, set this option to \"node_modules/@hapi/lab\"",
           "type": [
             "string",
             "null"
@@ -119,7 +122,7 @@
           "default": null,
           "scope": "resource"
         },
-        "jasmineExplorer.debuggerConfig": {
+        "labExplorer.debuggerConfig": {
           "description": "The name of a launch configuration to use for debugging sessions",
           "type": [
             "string",
@@ -128,26 +131,18 @@
           "default": null,
           "scope": "resource"
         },
-        "jasmineExplorer.breakOnFirstLine": {
+        "labExplorer.breakOnFirstLine": {
           "description": "when debugging, inject a breakpoint at the 1st line of the 1st run test",
           "type": "boolean",
           "default": false,
           "scope": "resource"
         },
-        "jasmineExplorer.debuggerSkipFiles": {
-          "description": "An array of glob patterns for files to skip when debugging",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "scope": "resource"
-        },
-        "jasmineExplorer.logpanel": {
+        "labExplorer.logpanel": {
           "description": "write diagnotic logs to an output panel",
           "type": "boolean",
           "scope": "resource"
         },
-        "jasmineExplorer.logfile": {
+        "labExplorer.logfile": {
           "description": "write diagnostic logs to the given file",
           "type": "string",
           "scope": "resource"

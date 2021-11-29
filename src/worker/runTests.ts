@@ -1,44 +1,63 @@
+import rewire from 'rewire';
 import * as util from 'util';
-import * as RegExEscape from 'escape-string-regexp';
-import { RunTestsReporter } from './runTestsReporter';
+import Path, { join } from 'path';
+import { patchLabCli, patchRunner, spyLab, stopSpy } from './patchLab';
 
 const sendMessage = process.send ? (message: any) => process.send!(message) : () => {};
+
+function stripScripts(scripts: any[], testsToRun: string[]): any[] {
+	if (testsToRun.length) {
+		
+	}
+
+	return scripts;
+}
 
 let logEnabled = false;
 try {
 
-	let testsToRun: string[] | undefined;
-
 	const argv = process.argv;
-	const jasminePath = argv[2];
-	const configFile = argv[3];
+	const labPath = argv[2];
 	logEnabled = <boolean>JSON.parse(argv[4]);
+	const primaries: string[] = JSON.parse(argv[5]);
+	const testsToRun: string[] = JSON.parse(argv[6]);
 
-	if (argv.length > 5) {
-		testsToRun = JSON.parse(argv[5]);
+	const Lab = rewire(join(labPath, '../cli'));
+
+	if (logEnabled) sendMessage('Loading Config file');
+	let labConfig = require(argv[3]);
+	labConfig = patchLabCli(Lab, labConfig);
+	labConfig.lint = false; // Not yet supported
+	labConfig.coverage = false; // Not yet supported
+
+	if (logEnabled) sendMessage('Scanning test files');
+	spyLab(labPath);
+	let scripts: any[] = [];
+	const traverse = Lab.__get__('internals.traverse');
+	if (primaries.length) {
+		for (let primary of primaries) {
+			primary = primary.split('#')[0]; // Removes line number
+			const sepIdx = primary.lastIndexOf(Path.sep);
+			const filename = primary.substr(sepIdx+1);
+			const folder = primary.substr(0, sepIdx);
+	
+			labConfig.pattern = new RegExp(filename.replace(/[\^\$\.\*\+\-\?\=\!\:\|\\\/\(\)\[\]\{\}\,]/g, '\\$&'));
+			scripts.push(...traverse([folder], labConfig));
+		}
+	} else {
+		// If root, run all tests
+		scripts.push(...traverse(labConfig.paths, labConfig));
 	}
-
-	const regExp = testsToRun ? testsToRun.map(RegExEscape).join('|') : undefined;
-
-	const Jasmine = require(jasminePath);
-	const jasmine = new Jasmine({ baseProjectPath: process.cwd });
-	if (logEnabled) sendMessage('Loading config file');
-	jasmine.loadConfigFile(configFile);
-
-        // vscode output channels have no support for ANSI color codes
-        jasmine.configureDefaultReporter({
-            showColors: false
-        });
-
-	if (logEnabled) sendMessage('Executing Jasmine');
-	jasmine.execute(undefined, regExp);
-
-	// The reporter must be added after the call to jasmine.execute() because otherwise
-	// it would be removed if the user changes the reporter in the helper files. 
-	// Note that jasmine will start the tests asynchronously, so the reporter will still
-	// be added before the tests are run.
-	if (logEnabled) sendMessage('Creating and adding reporter');
-	jasmine.env.addReporter(new RunTestsReporter(sendMessage, testsToRun));
+	stopSpy(labPath);
+	
+	if (logEnabled) sendMessage('Stripping selected tests');
+	scripts = stripScripts(scripts, testsToRun);
+	
+	if (logEnabled) sendMessage('Starting reporter');
+	labConfig.reporter = require.resolve('./runTestsReporter');
+	const Runner = rewire(join(labPath, '../runner'));
+	patchRunner(Runner); // Add startTest event
+	Runner.report(scripts, labConfig);
 
 } catch (err) {
 	if (logEnabled) sendMessage(`Caught error ${util.inspect(err)}`);
