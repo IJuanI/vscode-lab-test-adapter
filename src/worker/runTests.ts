@@ -5,12 +5,29 @@ import { patchLabCli, patchRunner, spyLab, stopSpy } from './patchLab';
 
 const sendMessage = process.send ? (message: any) => process.send!(message) : () => {};
 
-function stripScripts(scripts: any[], testsToRun: string[]): any[] {
+function stripExperiments(experiments: any[], testsToRun: string[]): any[] {
+	let strippedExperiments: any[] = [];
 	if (testsToRun.length) {
-		
+		experiments.forEach(experiment => {
+			experiment.experiments = stripExperiments(experiment.experiments, testsToRun);
+			experiment.tests = experiment.tests.filter((test: any) => testsToRun
+				.includes(`${test.location?.file}#${test.location?.line}`));
+			strippedExperiments.push(experiment);
+		});
 	}
 
-	return scripts;
+	return experiments;
+}
+
+function stripScripts(scripts: any[], testsToRun: string[]): any[] {
+	let strippedScripts: any[] = [];
+	if (testsToRun.length) {
+		scripts.forEach(script => {
+			script._current.experiments = stripExperiments(script._current.experiments, testsToRun);
+			strippedScripts.push(script);
+		});
+	}
+	return strippedScripts;
 }
 
 let logEnabled = false;
