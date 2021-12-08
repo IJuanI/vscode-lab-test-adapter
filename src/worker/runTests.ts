@@ -10,8 +10,10 @@ function stripExperiments(experiments: any[], testsToRun: string[]): any[] {
 	if (testsToRun.length) {
 		experiments.forEach(experiment => {
 			experiment.experiments = stripExperiments(experiment.experiments, testsToRun);
-			experiment.tests = experiment.tests.filter((test: any) => testsToRun
-				.includes(`${test.location?.file}#${test.location?.line}`));
+			if (!testsToRun.includes(`${experiment.location?.file}#${experiment.location?.line}`)) {
+				experiment.tests = experiment.tests.filter((test: any) => testsToRun
+					.includes(`${test.location?.file}#${test.location?.line}`));
+			}
 			strippedExperiments.push(experiment);
 		});
 	}
