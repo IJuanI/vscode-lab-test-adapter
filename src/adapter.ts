@@ -289,7 +289,7 @@ export class LabAdapter implements TestAdapter, IDisposable {
 					this.log.info(`Worker: ${message}`);
 
 				} else {
-					if (this.log.enabled) this.log.info(`Received update for ${message.test} (${message.state})`);
+					// if (this.log.enabled) this.log.debug(`Received update for ${message.test} (${message.state})`);
 
 					if (message.failures) {
 						// message.decorations = this.createDecorations(message, testfiles);

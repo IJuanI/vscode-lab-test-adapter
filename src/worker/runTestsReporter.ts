@@ -45,7 +45,7 @@ export = class RunTestsReporter implements CustomReporter {
 		sendMessage(ev);
 	}
 	end(notebook: any): void {
-		sendMessage(`Run ${notebook.tests.count} tests in ${notebook.ms}ms. Failures: ${notebook.failures}`);
+		sendMessage(`Run ${notebook.tests.length} tests in ${notebook.ms}ms. Failures: ${notebook.failures}`);
 	}
 
 // 	specStarted(result: jasmine.CustomReporterResult): void {
