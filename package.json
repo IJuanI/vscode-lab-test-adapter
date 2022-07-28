@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@hapi/code": "8.0.5",
-    "@hapi/lab": "24.4.0",
+    "@hapi/lab": "^25.0.1",
     "mock-require": "3.0.3",
     "rewire": "5.0.0",
     "stack-trace": "0.0.10",
@@ -57,7 +57,7 @@
     "@types/stack-trace": "0.0.29",
     "@types/vscode": "^1.62.0",
     "rimraf": "^3.0.2",
-    "vsce": "2.5.0"
+    "vsce": "^2.10.0"
   },
   "engines": {
     "vscode": "^1.62.0"
